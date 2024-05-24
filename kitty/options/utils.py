@@ -45,7 +45,7 @@ from kitty.conf.utils import (
 )
 from kitty.constants import is_macos
 from kitty.fast_data_types import CURSOR_BEAM, CURSOR_BLOCK, CURSOR_UNDERLINE, Color, Shlex, SingleKey
-from kitty.fonts import FontFeature, FontModification, FontSpec, ModificationType, ModificationUnit, ModificationValue
+from kitty.fonts import FontModification, FontSpec, ModificationType, ModificationUnit, ModificationValue
 from kitty.key_names import character_key_name_aliases, functional_key_name_aliases, get_key_name_lookup
 from kitty.rgb import color_as_int
 from kitty.types import FloatEdges, MouseEvent
@@ -855,7 +855,7 @@ def clear_all_shortcuts(val: str, dict_with_parse_results: Optional[Dict[str, An
     return ans
 
 
-def font_features(val: str) -> Iterable[Tuple[str, Tuple[FontFeature, ...]]]:
+def font_features(val: str) -> Iterable[Tuple[str, Tuple[defines.ParsedFontFeature, ...]]]:
     if val == 'none':
         return
     parts = val.split()
@@ -866,11 +866,9 @@ def font_features(val: str) -> Iterable[Tuple[str, Tuple[FontFeature, ...]]]:
         features = []
         for feat in parts[1:]:
             try:
-                parsed = defines.parse_font_feature(feat)
+                features.append(defines.ParsedFontFeature(feat))
             except ValueError:
                 log_error(f'Ignoring invalid font feature: {feat}')
-            else:
-                features.append(FontFeature(feat, parsed))
         yield parts[0], tuple(features)
 
 
